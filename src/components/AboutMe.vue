@@ -2,9 +2,9 @@
   <div class="aboutMe">
     <h3>{{ msg }}</h3>
     <p>
-      관리자 : mw-kim<br>
-      E-Mail : mw-kim@****.net<br>
-      HP : 010-****-****
+      mw-kim<br>
+      mw-kim@****.net<br>
+      010-****-****
     </p>
   </div>
 </template>
