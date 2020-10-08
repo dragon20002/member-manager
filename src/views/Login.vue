@@ -5,14 +5,14 @@
         <div class="label"><label for="user-id">아이디</label></div>
         <input id="user-id" name="userId" class="form-control mb-2 mr-sm-2"
           type="text" placeholder="아이디" autocomplete="off" v-model="member.userId"
-          @keyup.enter="login()">
+          @keyup.enter="doLogin()">
 
         <div class="label"><label for="password">비밀번호</label></div>
         <input id="password" name="password" class="form-control mb-2 mr-sm-2"
           type="password" placeholder="비밀번호" v-model="member.password"
-          @keyup.enter="login()">
+          @keyup.enter="doLogin()">
       </div>
-      <button id="login-btn" class="btn btn-success" @click="login()">로그인</button>
+      <button id="login-btn" class="btn btn-success" @click="doLogin()">로그인</button>
     </form>
     <span><router-link to="/create-member">회원가입</router-link></span>
     <span><router-link to="/">아이디 찾기</router-link></span>
@@ -39,7 +39,7 @@ export default {
     /**
      * 로그인 요청
      */
-    login() {
+    doLogin() {
       const { userId, password } = this.member;
 
       if (userId.length === 0) {
@@ -52,7 +52,7 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      axios.post(`${this.$data.$hostname}/api/login/doLogin`, this.member)
+      axios.post(`${this.$data.$hostname}/login`, this.member)
         .then((response) => {
           this.$parent.hasAuth = response.data;
           if (this.$parent.hasAuth) {
@@ -61,7 +61,7 @@ export default {
             this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');
           }
         }).catch((err) => {
-          console.log('login() err', err.response);
+          console.log('doLogin() err', err.response);
           this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');
         }).finally(() => {
           this.$parent.isLoading = false;

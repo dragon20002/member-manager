@@ -6,7 +6,7 @@
         <span><router-link to="/login" v-show="!hasAuth">로그인</router-link></span>
       </div>
       <div class="header-top" v-show="hasAuth">
-        <span><router-link to="/home" v-show="hasAuth">로그아웃</router-link></span>
+        <span><button class="btn btn-link" v-show="hasAuth" @click="doLogout()">로그아웃</button></span>
       </div>
       <div class="header-menu">
         <menu-item
@@ -72,6 +72,31 @@ export default {
     MenuItem,
   },
   methods: {
+    checkAuth() {
+      this.isLoading = true;
+      axios.get(`${this.$data.$hostname}/api/login/has-auth`)
+        .then((response) => {
+          this.hasAuth = response.data;
+        }).finally(() => {
+          this.isLoading = false;
+        });
+    },
+    doLogout() {
+      if (!this.hasAuth) {
+        router.push('/');
+        return;
+      }
+
+      this.isLoading = true;
+      axios.post(`${this.$data.$hostname}/logout`)
+        .then((response) => {
+          console.log('doLogout response', response);
+        }).catch((err) => {
+          console.log('doLogout err', err.response);
+        }).finally(() => {
+          this.isLoading = false;
+        });
+    },
     openAlertPopup(msg, callback) {
       this.popupMsg = msg;
       this.showAlertPopup = true;
@@ -84,15 +109,6 @@ export default {
         this.popupCallback();
         this.popupCallback = null;
       }
-    },
-    checkAuth() {
-      this.$parent.isLoading = true;
-      axios.get(`${this.$data.$hostname}/api/login/hasAuth`)
-        .then((response) => {
-          this.$parent.hasAuth = response.data;
-        }).finally(() => {
-          this.$parent.isLoading = false;
-        });
     },
   },
   mounted() {

@@ -5,50 +5,44 @@
         <label for="user-id" class="req">아이디</label>
         <div class="input-group mb-2 mr-sm-2" v-if="isMemberDup">
           <input id="user-id" name="userId" class="form-control"
-            type="text" placeholder="한글/영문 6자 이상" v-model="member.userId"
-            @keyup.enter="checkMemberDup()">
+            type="text" placeholder="한글/영문 6자 이상" v-model="member.userId">
           <div class="input-group-append">
-            <button class="btn btn-success" @click="checkMemberDup()">중복확인</button>
+            <div class="btn btn-success" @click="checkMemberDup()">중복확인</div>
           </div>
         </div>
         <div class="input-group mb-2 mr-sm-2" v-else>
           <input id="user-id" name="userId" class="form-control"
-            type="text" placeholder="한글/영문 6자 이상" v-model="member.userId"
-            @keyup.enter="createMember()" readonly>
+            type="text" placeholder="한글/영문 6자 이상" v-model="member.userId" readonly>
           <div class="input-group-append">
-            <button class="btn btn-danger" @click="clearUserId()">
+            <div class="btn btn-danger" @click="clearUserId()">
               <i class="fa fa-times"></i>
-            </button>
+            </div>
           </div>
         </div>
 
         <label for="password" class="req">비밀번호</label>
         <input id="password" name="password" class="form-control mb-2 mr-sm-2"
-          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" v-model="member.password"
-          @keyup.enter="createMember()">
+          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" v-model="member.password">
 
         <label for="password-re" class="req">비밀번호 확인</label>
         <input id="password-re" class="form-control mb-2 mr-sm-2"
-          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" v-model="member.passwordRe"
-          @keyup.enter="createMember()">
+          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" v-model="member.passwordRe">
 
         <label for="name" class="req">이름</label>
         <input id="name" name="name" class="form-control mb-2 mr-sm-2"
-          type="text" v-model="member.name" @keyup.enter="createMember()">
+          type="text" v-model="member.name">
 
         <label for="email" class="req">이메일</label>
         <input id="email" name="email" class="form-control mb-2 mr-sm-2"
-          type="text" placeholder="your-email-id@examle.com" v-model="member.email"
-          @keyup.enter="createMember()">
+          type="text" placeholder="your-email-id@examle.com" v-model="member.email">
 
         <label for="tel-no">전화번호</label>
         <input id="tel-no" name="telNo" class="form-control mb-2 mr-sm-2"
-          type="text" v-model="member.telNo" @keyup.enter="createMember()">
+          type="text" v-model="member.telNo">
 
         <label for="address">주소</label>
         <input id="address" name="address" class="form-control mb-2 mr-sm-2"
-          type="text" placeholder="시/도 구/군" v-model="member.address"
-          @keyup.enter="createMember()">
+          type="text" placeholder="시/도 구/군" v-model="member.address">
       </div>
       <button id="create-member-btn" class="btn btn-success"
         @click="createMember()">회원가입</button>
@@ -144,6 +138,7 @@ export default {
      * 아이디 중복체크 요청
      */
     checkMemberDup() {
+      console.log('checkMemberDup');
       const { userId } = this.member;
       if (!userId || userId.length === 0) {
         this.$parent.openAlertPopup('아이디를 입력해주세요.');
@@ -183,6 +178,7 @@ export default {
      * 계정 생성 요청
      */
     createMember() {
+      console.log('createMember');
       if (!this.validateInputs()) {
         return;
       }
