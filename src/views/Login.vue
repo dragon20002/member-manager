@@ -22,7 +22,6 @@
 
 <script>
 import $ from 'jquery';
-import axios from 'axios';
 import router from '@/router';
 
 export default {
@@ -52,10 +51,13 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      axios.post(`${this.$data.$hostname}/login`, this.member)
+      this.$parent.axios.post(`${this.$data.$hostname}/api/login`, this.member)
         .then((response) => {
-          this.$parent.hasAuth = response.data;
+          console.log('res', response);
+          this.$parent.hasAuth = response.data.hasAuth;
           if (this.$parent.hasAuth) {
+            this.$parent.axios.defaults.headers.jws = response.data.jws;
+            this.$session.set('jws', response.data.jws);
             router.push('/');
           } else {
             this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');

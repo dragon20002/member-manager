@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import VueSession from 'vue-session';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -11,6 +12,8 @@ Vue.mixin({
     };
   },
 });
+
+Vue.use(VueSession);
 
 new Vue({
   router,

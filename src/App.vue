@@ -60,6 +60,7 @@ export default {
   },
   data() {
     return {
+      axios: null,
       hasAuth: false,
       isLoading: false,
       popupMsg: '',
@@ -74,28 +75,20 @@ export default {
   methods: {
     checkAuth() {
       this.isLoading = true;
-      axios.get(`${this.$data.$hostname}/api/login/has-auth`)
+      this.axios.get(`${this.$data.$hostname}/api/login/has-auth`)
         .then((response) => {
-          this.hasAuth = response.data;
+          this.hasAuth = response.data.hasAuth;
+          if (this.hasAuth) {
+            this.axios.defaults.headers.jws = response.data.jws;
+          }
         }).finally(() => {
           this.isLoading = false;
         });
     },
     doLogout() {
-      if (!this.hasAuth) {
-        router.push('/');
-        return;
-      }
-
-      this.isLoading = true;
-      axios.post(`${this.$data.$hostname}/logout`)
-        .then((response) => {
-          console.log('doLogout response', response);
-        }).catch((err) => {
-          console.log('doLogout err', err.response);
-        }).finally(() => {
-          this.isLoading = false;
-        });
+      this.hasAuth = false;
+      this.axios.defaults.headers.jws = null;
+      router.push('/');
     },
     openAlertPopup(msg, callback) {
       this.popupMsg = msg;
@@ -112,7 +105,19 @@ export default {
     },
   },
   mounted() {
-    this.checkAuth();
+    this.axios = axios.create({
+      baseURL: this.$data.$hostname,
+      timeout: 10000,
+      headers: {},
+    });
+
+    const jws = this.$session.get('jws');
+    if (jws != null) {
+      this.hasAuth = true;
+      this.axios.defaults.headers.jws = jws;
+    } else {
+      this.checkAuth();
+    }
   },
 };
 </script>

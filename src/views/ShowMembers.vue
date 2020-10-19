@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import router from '@/router';
 
 export default {
@@ -30,13 +29,13 @@ export default {
   }),
   mounted() {
     this.$parent.isLoading = true;
-    axios.get(`${this.$data.$hostname}/api/members`)
+    this.$parent.axios.get(`${this.$data.$hostname}/api/members`)
       .then((response) => {
         this.members = response.data;
       }).catch((err) => {
         const { status } = err.response;
-        if (status === 403) {
-          this.$parent.isAuth = false;
+        if (status === 401) {
+          this.$parent.hasAuth = false;
 
           // 로그인화면으로 이동
           router.push('/login');

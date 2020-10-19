@@ -55,7 +55,6 @@
 
 <script>
 import $ from 'jquery';
-import axios from 'axios';
 import router from '@/router';
 
 export default {
@@ -153,7 +152,7 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      axios.post(`${this.$data.$hostname}/api/login/check-member-dup`, { userId })
+      this.$parent.axios.post(`${this.$data.$hostname}/api/login/check-member-dup`, { userId })
         .then((response) => {
           this.isMemberDup = response.data;
           if (this.isMemberDup) {
@@ -184,7 +183,7 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      axios.post(`${this.$data.$hostname}/api/login/create-member`, this.member)
+      this.$parent.axios.post(`${this.$data.$hostname}/api/login/create-member`, this.member)
         .then((response) => {
           const isCreated = response.data;
           if (isCreated) {
