@@ -55,4 +55,21 @@ const router = new VueRouter({
   routes,
 });
 
+/**
+ * 로그인이 필요한 경로
+ */
+const authRoutePaths = [
+  '/show-members',
+];
+
+router.beforeEach((to, from, next) => {
+  if (authRoutePaths.indexOf(to.path) > -1) {
+    if (!router.app.$session.get('jws')) {
+      next('/login');
+      return;
+    }
+  }
+  next();
+});
+
 export default router;

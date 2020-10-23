@@ -8,7 +8,7 @@
         <div class="col">이메일</div>
         <div class="col">주소</div>
       </div>
-      <div class="row" v-for="member in members" :key="member.userId">
+      <div class="row" v-for="member in members" :key="member.id">
         <div class="col">{{ member.userId }}</div>
         <div class="col">{{ member.name }}</div>
         <div class="col">{{ member.telNo }}</div>

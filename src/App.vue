@@ -80,6 +80,10 @@ export default {
           this.hasAuth = response.data.hasAuth;
           if (this.hasAuth) {
             this.axios.defaults.headers.jws = response.data.jws;
+            this.$session.set('jws', response.data.jws);
+          } else {
+            this.axios.defaults.headers.jws = null;
+            this.$session.set('jws', null);
           }
         }).finally(() => {
           this.isLoading = false;
@@ -88,7 +92,10 @@ export default {
     doLogout() {
       this.hasAuth = false;
       this.axios.defaults.headers.jws = null;
-      router.push('/');
+      router.app.$session.set('jws', null);
+      if (!router.currentRoute || router.currentRoute.path !== '/') {
+        router.push('/');
+      }
     },
     openAlertPopup(msg, callback) {
       this.popupMsg = msg;
@@ -113,11 +120,9 @@ export default {
 
     const jws = this.$session.get('jws');
     if (jws != null) {
-      this.hasAuth = true;
       this.axios.defaults.headers.jws = jws;
-    } else {
-      this.checkAuth();
     }
+    this.checkAuth();
   },
 };
 </script>

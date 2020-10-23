@@ -101,7 +101,16 @@ export default {
         return false;
       }
 
-      // 2.2.1 비밀번호 유효성 체크
+      $('input[name=userId').removeClass('error');
+
+      // 2.2.1 아이디와 다른 비밀번호 체크
+      if (this.member.userId === this.member.password) {
+        $('input[name=password]').addClass('error');
+        this.$parent.openAlertPopup('비밀번호는 아이디와 다르게 입력해주세요.');
+        return false;
+      }
+
+      // 2.2.2 비밀번호 유효성 체크
       const hasAlpha = this.member.password.match(/[A-Za-z]+/);
       const hasNum = this.member.password.match(/[0-9]+/);
       const hasChar = this.member.password.match(/[`~!@#$%^&*()\-_]+/);
@@ -112,12 +121,13 @@ export default {
         return false;
       }
 
-      // 2.2.2 비밀번호 재입력 체크
+      // 2.2.3 비밀번호 재입력 체크
       if (this.member.password !== this.member.passwordRe) {
         $('input[name=password]').addClass('error');
         this.$parent.openAlertPopup('같은 비밀번호를 입력해주세요.');
         return false;
       }
+
       $('input[name=password]').removeClass('error');
 
       // 2.3 전화번호 유효성 체크
@@ -128,6 +138,7 @@ export default {
         this.$parent.openAlertPopup('올바른 전화번호를 입력해주세요.');
         return false;
       }
+
       $('input[name=telNo]').removeClass('error');
 
       return true;
@@ -137,9 +148,9 @@ export default {
      * 아이디 중복체크 요청
      */
     checkMemberDup() {
-      console.log('checkMemberDup');
       const { userId } = this.member;
       if (!userId || userId.length === 0) {
+        $('input[name=userId]').addClass('error');
         this.$parent.openAlertPopup('아이디를 입력해주세요.');
         return;
       }
@@ -150,6 +161,8 @@ export default {
         this.$parent.openAlertPopup('아이디는 한글/영문/숫자 6자 이상으로 입력해주세요.');
         return;
       }
+
+      $('input[name=userId]').removeClass('error');
 
       this.$parent.isLoading = true;
       this.$parent.axios.post(`${this.$data.$hostname}/api/login/check-member-dup`, { userId })
@@ -177,7 +190,6 @@ export default {
      * 계정 생성 요청
      */
     createMember() {
-      console.log('createMember');
       if (!this.validateInputs()) {
         return;
       }

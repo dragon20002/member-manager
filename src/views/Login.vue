@@ -53,17 +53,17 @@ export default {
       this.$parent.isLoading = true;
       this.$parent.axios.post(`${this.$data.$hostname}/api/login`, this.member)
         .then((response) => {
-          console.log('res', response);
           this.$parent.hasAuth = response.data.hasAuth;
           if (this.$parent.hasAuth) {
             this.$parent.axios.defaults.headers.jws = response.data.jws;
             this.$session.set('jws', response.data.jws);
-            router.push('/');
+            if (!router.currentRoute || router.currentRoute.path !== '/') {
+              router.push('/');
+            }
           } else {
             this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');
           }
-        }).catch((err) => {
-          console.log('doLogin() err', err.response);
+        }).catch(() => {
           this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');
         }).finally(() => {
           this.$parent.isLoading = false;
