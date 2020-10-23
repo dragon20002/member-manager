@@ -273,25 +273,37 @@ export default {
     ```
 
 6. axios 사용법
-    ```js
-    // import
-    import axios from 'axios';
+    - HTTP 요청
+      ```js
+      // import
+      import axios from 'axios';
 
-    // 두가지 방식이 있지만, 보통 아래와 같이 .get/.post/.put/.delete 호출하는 방식으로 사용하는게 편함
-    axios.post(`${this.$data.$hostname}/api/login/check-member-dup`, { userId })
-            .then((response) => {
-              this.isMemberDup = response.data;
-              if (this.isMemberDup) {
-                this.$parent.openAlertPopup('이미 사용중인 아이디 입니다.');
-              } else {
-                this.$parent.openAlertPopup('사용가능한 아이디 입니다.');
-              }
-            }).catch((err) => {
-              console.log('err=', err.response);
-            }).finally(() => {
-              this.$parent.isLoading = false;
-            });
-    ```
+      // 두가지 방식이 있지만, 보통 아래와 같이 .get/.post/.put/.delete 호출하는 방식으로 사용하는게 편함
+      axios.post(`${this.$data.$hostname}/api/login/check-member-dup`, { userId })
+              .then((response) => {
+                this.isMemberDup = response.data;
+                if (this.isMemberDup) {
+                  this.$parent.openAlertPopup('이미 사용중인 아이디 입니다.');
+                } else {
+                  this.$parent.openAlertPopup('사용가능한 아이디 입니다.');
+                }
+              }).catch((err) => {
+                console.log('err=', err.response);
+              }).finally(() => {
+                this.$parent.isLoading = false;
+              });
+      ```
+
+    - axios 인스턴스 생성 및 Header 수정
+      ```js
+      const axiosInst = axios.create({
+        baseURL: this.$data.$hostname,
+        timeout: 10000,
+        headers: {},
+      });
+
+      axiosInst.defaults.headers.jws = jws;
+      ```
 
 7. Vue-router 사용법
     ```js
@@ -304,47 +316,75 @@ export default {
     ```
 
 8. AirBnB lint 관련된 주요에러
-  - map object의 필드를 특정 변수에 바인딩 시 destructuring 에러
-    ```js
-    const userId = this.member.userId; //error
-    const email = this.member.email; //error
-    //--->
-    const { userId, email } = this.member.userId;
-    ```
+    - map object의 필드를 특정 변수에 바인딩 시 destructuring 에러
+      ```js
+      const userId = this.member.userId; //error
+      const email = this.member.email; //error
+      // --->
+      const { userId, email } = this.member.userId;
+      ```
 
-  - 함수 선언/호출 등 되도록 축약형을 사용
-    ```js
-    function doSomething() { // error
-      // ...
-    }
-    // --->
-    doSomething() {
-    }
+    - 함수 선언/호출 등 되도록 축약형을 사용
+      ```js
+      function doSomething() { // error
+        // ...
+      }
+      // --->
+      doSomething() {
+      }
 
-    doSomething(function() { // error
-      // callback
-    });
-    // --->
-    doSomething(() => {});
-    ```
+      doSomething(function() { // error
+        // callback
+      });
+      // --->
+      doSomething(() => {});
+      ```
 
-  - var 대신 const/let, ++ 대신 +=, 문자열과 연산자 사이에 공백 필수
-    ```js
-    for (let i = 0; i < len; i++) { // error
-    // --->
-    for (let i = 0; i < len; i += 1) {
-    ```
+    - var 대신 const/let, ++ 대신 +=, 문자열과 연산자 사이에 공백 필수
+      ```js
+      for (let i = 0; i < len; i++) { // error
+      // --->
+      for (let i = 0; i < len; i += 1) {
+      ```
 
-  - map 선언 시 마지막 항목이라도 뒤에 , 필수 (trailing comma)
-    ```js
-    const data = {
-      message: 'hello', // , 필수
-    };
-    ```
+    - map 선언 시 마지막 항목이라도 뒤에 , 필수 (trailing comma)
+      ```js
+      const data = {
+        message: 'hello', // , 필수
+      };
+      ```
 
-  - 주석 작성 시 //와 문자열 사이에 공백 필수, 파일 마지막 eof 개행 필수
-    ```js
-    // 주석
-    // 다음 라인 EOF
+    - 주석 작성 시 //와 문자열 사이에 공백 필수, 파일 마지막 eof 개행 필수
+      ```js
+      // 주석
+      // 다음 라인 EOF
 
-    ```
+      ```
+    
+    - LF/CRLF 관련 규칙 (linebreak-style) 해제
+      
+      package.json 수정
+      ```json
+      "rules": {
+        "linebreak-style": "off"
+      },
+      ```
+
+9. VueSession 사용법
+    - main.js vue-session 추가
+      ```js
+      import VueSession from 'vue-session';
+      ...
+      Vue.use(VueSession);
+      ```
+
+    - Get/Set
+      ```js
+      // javascript
+      this.$session.set('jws', jws);
+      this.$session.get('jsw');
+
+      // router/index.js
+      import router from '@/router';
+      router.app.$session.get('jws');
+      ```
