@@ -58,6 +58,9 @@ export default {
       default: () => menus,
     },
   },
+  components: {
+    MenuItem,
+  },
   data() {
     return {
       axios: null,
@@ -69,30 +72,36 @@ export default {
       showConfirmPopup: false,
     };
   },
-  components: {
-    MenuItem,
-  },
   methods: {
     checkAuth() {
       this.isLoading = true;
-      this.axios.get(`${this.$data.$hostname}/api/login/has-auth`)
+      this.axios.get('api/login/has-auth')
         .then((response) => {
-          this.hasAuth = response.data.hasAuth;
-          if (this.hasAuth) {
-            this.axios.defaults.headers.jws = response.data.jws;
-            this.$session.set('jws', response.data.jws);
+          if (response.data.hasAuth) {
+            this.doLogin(response.data.loginType, response.data.jws);
           } else {
-            this.axios.defaults.headers.jws = null;
-            this.$session.set('jws', null);
+            this.doLogout();
           }
         }).finally(() => {
           this.isLoading = false;
         });
     },
+    doLogin(loginType, jws) {
+      this.hasAuth = true;
+      this.$session.set('login-type', loginType);
+      this.$session.set('jws', jws);
+      this.axios.defaults.headers.loginType = loginType;
+      this.axios.defaults.headers.jws = jws;
+      if (!router.currentRoute || router.currentRoute.path !== '/') {
+        router.push('/');
+      }
+    },
     doLogout() {
       this.hasAuth = false;
+      this.$session.set('login-type', null);
+      this.$session.set('jws', null);
+      this.axios.defaults.headers.loginType = null;
       this.axios.defaults.headers.jws = null;
-      router.app.$session.set('jws', null);
       if (!router.currentRoute || router.currentRoute.path !== '/') {
         router.push('/');
       }
@@ -115,13 +124,16 @@ export default {
     this.axios = axios.create({
       baseURL: this.$data.$hostname,
       timeout: 10000,
-      headers: {},
+      headers: {
+        type: '',
+        jws: '',
+      },
     });
 
+    const loginType = this.$session.get('login-type');
     const jws = this.$session.get('jws');
-    if (jws != null) {
-      this.axios.defaults.headers.jws = jws;
-    }
+    this.axios.defaults.headers.loginType = loginType;
+    this.axios.defaults.headers.jws = jws;
     this.checkAuth();
   },
 };

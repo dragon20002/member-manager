@@ -5,14 +5,16 @@
         <label for="user-id" class="req">아이디</label>
         <div class="input-group mb-2 mr-sm-2" v-if="isMemberDup">
           <input id="user-id" name="userId" class="form-control"
-            type="text" placeholder="한글/영문 6자 이상" v-model="member.userId">
+            type="text" placeholder="한글/영문 6자 이상" maxlength="64"
+            v-model="member.userId">
           <div class="input-group-append">
             <div class="btn btn-success" @click="checkMemberDup()">중복확인</div>
           </div>
         </div>
         <div class="input-group mb-2 mr-sm-2" v-else>
           <input id="user-id" name="userId" class="form-control"
-            type="text" placeholder="한글/영문 6자 이상" v-model="member.userId" readonly>
+            type="text" placeholder="한글/영문 6자 이상" maxlength="64"
+            v-model="member.userId" readonly>
           <div class="input-group-append">
             <div class="btn btn-danger" @click="clearUserId()">
               <i class="fa fa-times"></i>
@@ -22,11 +24,13 @@
 
         <label for="password" class="req">비밀번호</label>
         <input id="password" name="password" class="form-control mb-2 mr-sm-2"
-          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" v-model="member.password">
+          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" maxlength="64"
+          v-model="member.password">
 
         <label for="password-re" class="req">비밀번호 확인</label>
         <input id="password-re" class="form-control mb-2 mr-sm-2"
-          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" v-model="member.passwordRe">
+          type="password" placeholder="영문/숫자/특수문자 포함 8자 이상" maxlength="64"
+          v-model="member.passwordRe">
 
         <label for="name" class="req">이름</label>
         <input id="name" name="name" class="form-control mb-2 mr-sm-2"
@@ -34,15 +38,16 @@
 
         <label for="email" class="req">이메일</label>
         <input id="email" name="email" class="form-control mb-2 mr-sm-2"
-          type="text" placeholder="your-email-id@examle.com" v-model="member.email">
+          type="text" placeholder="your-email-id@examle.com" maxlength="64"
+          v-model="member.email">
 
         <label for="tel-no">전화번호</label>
         <input id="tel-no" name="telNo" class="form-control mb-2 mr-sm-2"
-          type="text" v-model="member.telNo">
+          type="text" placeholder="000-0000-0000" maxlength="64" v-model="member.telNo">
 
         <label for="address">주소</label>
         <input id="address" name="address" class="form-control mb-2 mr-sm-2"
-          type="text" placeholder="시/도 구/군" v-model="member.address">
+          type="text" placeholder="시/도 구/군" maxlength="64" v-model="member.address">
       </div>
       <button id="create-member-btn" class="btn btn-success"
         @click="createMember()">회원가입</button>
@@ -132,7 +137,7 @@ export default {
 
       // 2.3 전화번호 유효성 체크
       const { telNo } = this.member;
-      const telNoRegex = /[0-9]{2,3}-[0-9]{3,4}-[0-9]{3,4}/;
+      const telNoRegex = /^[0-9]{2,3}-[0-9]{3,4}-[0-9]{3,4}$/;
       if (telNo && telNo.length > 0 && !telNo.match(telNoRegex)) {
         $('input[name=telNo]').addClass('error');
         this.$parent.openAlertPopup('올바른 전화번호를 입력해주세요.');
@@ -165,7 +170,7 @@ export default {
       $('input[name=userId]').removeClass('error');
 
       this.$parent.isLoading = true;
-      this.$parent.axios.post(`${this.$data.$hostname}/api/login/check-member-dup`, { userId })
+      this.$parent.axios.post('api/login/check-member-dup', { userId })
         .then((response) => {
           this.isMemberDup = response.data;
           if (this.isMemberDup) {
@@ -240,7 +245,7 @@ export default {
 
       // 전화번호 불필요한 문자 제거
       if (tarInputId === 'tel-no') {
-        this.member.telNo = this.member.telNo.replaceAll(/[^0-9]/gi, '');
+        this.member.telNo = this.member.telNo.replaceAll(/[^0-9-]/gi, '');
       }
     });
   },

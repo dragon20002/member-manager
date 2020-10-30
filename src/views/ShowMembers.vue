@@ -29,7 +29,7 @@ export default {
   }),
   mounted() {
     this.$parent.isLoading = true;
-    this.$parent.axios.get(`${this.$data.$hostname}/api/members`)
+    this.$parent.axios.get('api/members')
       .then((response) => {
         this.members = response.data;
       }).catch((err) => {

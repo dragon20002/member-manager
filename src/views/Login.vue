@@ -4,15 +4,19 @@
       <div class="input-wrap">
         <div class="label"><label for="user-id">아이디</label></div>
         <input id="user-id" name="userId" class="form-control mb-2 mr-sm-2"
-          type="text" placeholder="아이디" autocomplete="off" v-model="member.userId"
+          type="text" placeholder="아이디" maxlength="64" autocomplete="off"
+          v-model="member.userId"
           @keyup.enter="doLogin()">
 
         <div class="label"><label for="password">비밀번호</label></div>
         <input id="password" name="password" class="form-control mb-2 mr-sm-2"
-          type="password" placeholder="비밀번호" v-model="member.password"
+          type="password" placeholder="비밀번호" maxlength="64" v-model="member.password"
           @keyup.enter="doLogin()">
       </div>
-      <button id="login-btn" class="btn btn-success" @click="doLogin()">로그인</button>
+      <button class="btn btn-success login-btn" @click="doLogin()">로그인</button>
+      <GoogleLogin class="login-btn" :params="googleLogin.params"
+        :renderParams="googleLogin.renderParams"
+        :onSuccess="onSuccessGoogleLogin" :onFailure="onFailGoogleLogin" />
     </form>
     <span><router-link to="/create-member">회원가입</router-link></span>
     <span><router-link to="/">아이디 찾기</router-link></span>
@@ -21,13 +25,25 @@
 </template>
 
 <script>
+import GoogleLogin from 'vue-google-login';
 import $ from 'jquery';
-import router from '@/router';
 
 export default {
   name: 'Login',
+  components: {
+    GoogleLogin,
+  },
   data() {
     return {
+      googleLogin: {
+        params: {
+          client_id: '451544914380-m657ri1nr9i2b1qeq8jb8p3o3bl1o8b0.apps.googleusercontent.com',
+        },
+        renderParams: {
+          width: 320,
+          longtitle: true,
+        },
+      },
       member: {
         userId: '',
         password: '',
@@ -51,15 +67,10 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      this.$parent.axios.post(`${this.$data.$hostname}/api/login`, this.member)
+      this.$parent.axios.post('api/login', this.member)
         .then((response) => {
-          this.$parent.hasAuth = response.data.hasAuth;
-          if (this.$parent.hasAuth) {
-            this.$parent.axios.defaults.headers.jws = response.data.jws;
-            this.$session.set('jws', response.data.jws);
-            if (!router.currentRoute || router.currentRoute.path !== '/') {
-              router.push('/');
-            }
+          if (response.data.hasAuth) {
+            this.$parent.doLogin(null, response.data.jws);
           } else {
             this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');
           }
@@ -68,6 +79,13 @@ export default {
         }).finally(() => {
           this.$parent.isLoading = false;
         });
+    },
+    onSuccessGoogleLogin(googleUser) {
+      console.log(googleUser);
+      this.$parent.doLogin('google', googleUser.getAuthResponse().id_token);
+    },
+    onFailGoogleLogin(e) {
+      console.log(e.error);
     },
   },
   mounted() {
@@ -139,7 +157,7 @@ export default {
   border-color: #42b983;
 }
 
-.login #login-btn {
+.login .login-btn {
   width: 100%;
   margin-bottom: 10px;
 }
