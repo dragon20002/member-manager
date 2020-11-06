@@ -52,6 +52,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
+  mode: 'history',
   routes,
 });
 
@@ -63,12 +64,18 @@ const authRoutePaths = [
 ];
 
 router.beforeEach((to, from, next) => {
-  if (authRoutePaths.indexOf(to.path) > -1) {
+  const fromPath = (from) ? from.path : null;
+  const toPath = (to) ? to.path : null;
+
+  // 로그인이 필요한 경로 필터
+  if (authRoutePaths.indexOf(toPath) > -1) {
     if (!router.app.$session.get('jws')) {
       next('/login');
       return;
     }
   }
+
+  router.app.$log.debug('[router]', `Route from [${fromPath}] to [${toPath}]`);
   next();
 });
 

@@ -6,6 +6,7 @@
         <span><router-link to="/login" v-show="!hasAuth">로그인</router-link></span>
       </div>
       <div class="header-top" v-show="hasAuth">
+        <span>{{ username }} 님</span>
         <span><button class="btn btn-link" v-show="hasAuth" @click="doLogout()">로그아웃</button></span>
       </div>
       <div class="header-menu">
@@ -65,6 +66,7 @@ export default {
     return {
       axios: null,
       hasAuth: false,
+      username: '',
       isLoading: false,
       popupMsg: '',
       popupCallback: null,
@@ -77,31 +79,42 @@ export default {
       this.isLoading = true;
       this.axios.get('api/login/has-auth')
         .then((response) => {
-          if (response.data.hasAuth) {
-            this.doLogin(response.data.loginType, response.data.jws);
+          const {
+            hasAuth, loginType, jws, username,
+          } = response.data;
+
+          if (hasAuth) {
+            this.doLogin(loginType, { token: jws, username });
           } else {
-            this.doLogout();
+            this.invalidateAuth();
           }
         }).finally(() => {
           this.isLoading = false;
         });
     },
-    doLogin(loginType, jws) {
+    doLogin(loginType, user) {
       this.hasAuth = true;
+      this.username = user.username;
       this.$session.set('login-type', loginType);
-      this.$session.set('jws', jws);
+      this.$session.set('jws', user.token);
+      this.$session.set('username', user.username);
       this.axios.defaults.headers.loginType = loginType;
-      this.axios.defaults.headers.jws = jws;
+      this.axios.defaults.headers.jws = user.token;
       if (!router.currentRoute || router.currentRoute.path !== '/') {
         router.push('/');
       }
     },
-    doLogout() {
+    invalidateAuth() {
       this.hasAuth = false;
+      this.username = '';
       this.$session.set('login-type', null);
       this.$session.set('jws', null);
+      this.$session.set('username', null);
       this.axios.defaults.headers.loginType = null;
       this.axios.defaults.headers.jws = null;
+    },
+    doLogout() {
+      this.invalidateAuth();
       if (!router.currentRoute || router.currentRoute.path !== '/') {
         router.push('/');
       }

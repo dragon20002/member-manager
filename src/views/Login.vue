@@ -14,24 +14,37 @@
           @keyup.enter="doLogin()">
       </div>
       <button class="btn btn-success login-btn" @click="doLogin()">로그인</button>
-      <GoogleLogin class="login-btn" :params="googleLogin.params"
-        :renderParams="googleLogin.renderParams"
-        :onSuccess="onSuccessGoogleLogin" :onFailure="onFailGoogleLogin" />
     </form>
-    <span><router-link to="/create-member">회원가입</router-link></span>
-    <span><router-link to="/">아이디 찾기</router-link></span>
-    <span><router-link to="/">비밀번호 찾기</router-link></span>
+    <div class="login-type">
+      <span class="item">
+        <GoogleLogin :params="googleLogin.params"
+          :renderParams="googleLogin.renderParams"
+          :onSuccess="onSuccessGoogleLogin" :onFailure="onFailGoogleLogin" />
+      </span>
+      <span class="item">
+        <GithubLogin :params="githubLogin.params"
+          :renderParams="githubLogin.renderParams"
+          :onSuccess="onSuccessGithubLogin" :onFailure="onFailGithubLogin" />
+      </span>
+    </div>
+    <div class="login-menu">
+      <span class="item"><router-link to="/create-member">회원가입</router-link></span>
+      <span class="item"><router-link to="/">아이디 찾기</router-link></span>
+      <span class="item"><router-link to="/">비밀번호 찾기</router-link></span>
+    </div>
   </div>
 </template>
 
 <script>
 import GoogleLogin from 'vue-google-login';
+import GithubLogin from '@/components/GithubLogin.vue';
 import $ from 'jquery';
 
 export default {
   name: 'Login',
   components: {
     GoogleLogin,
+    GithubLogin,
   },
   data() {
     return {
@@ -40,8 +53,12 @@ export default {
           client_id: '451544914380-m657ri1nr9i2b1qeq8jb8p3o3bl1o8b0.apps.googleusercontent.com',
         },
         renderParams: {
-          width: 320,
-          longtitle: true,
+          width: 36,
+        },
+      },
+      githubLogin: {
+        params: {
+          client_id: 'abcd',
         },
       },
       member: {
@@ -81,11 +98,24 @@ export default {
         });
     },
     onSuccessGoogleLogin(googleUser) {
-      console.log(googleUser);
-      this.$parent.doLogin('google', googleUser.getAuthResponse().id_token);
+      this.$parent.doLogin('google', {
+        token: googleUser.getAuthResponse().id_token,
+        username: googleUser.getBasicProfile().getName(),
+      });
     },
     onFailGoogleLogin(e) {
-      console.log(e.error);
+      this.$log.debug('[Login]', e.error);
+      this.$parent.openAlertPopup(e.error);
+    },
+    onSuccessGithubLogin(githubUser) {
+      this.$parent.doLogin('github', {
+        token: githubUser.token,
+        username: githubUser.username,
+      });
+    },
+    onFailGithubLogin(e) {
+      this.$log.debug('[Login]', e);
+      this.$parent.openAlertPopup(e);
     },
   },
   mounted() {
@@ -167,7 +197,21 @@ export default {
   text-decoration-color: black;
 }
 
-.login span:not(:last-child)::after {
+.login .login-type {
+  margin-bottom: 10px;
+}
+
+.login .login-type .item {
+  padding: 4px;
+  background-color: white;
+  border: 1px solid #42b983;
+  border-radius: 8px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 1px;
+}
+
+.login .login-menu .item:not(:last-child)::after {
   content: " | ";
 }
 </style>
