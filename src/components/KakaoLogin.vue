@@ -1,11 +1,12 @@
 <template>
-  <div class="github-login-btn" @click="handleClick()">
-    <form id="github-login-form" method="GET" action="https://github.com/login/oauth/authorize">
+  <div class="kakao-login-btn" @click="handleClick()">
+    <form id="kakao-login-form" method="GET" action="https://kauth.kakao.com/oauth/authorize">
       <input type="hidden" name="client_id" :value="clientId">
       <input type="hidden" name="redirect_uri" :value="redirectUri">
+      <input type="hidden" name="response_type" value="code">
       <input type="hidden" name="state" :value="state">
     </form>
-    <img class="logo" src="../assets/github_logo.png">
+    <img class="logo" src="../assets/kakao_logo.png">
   </div>
 </template>
 
@@ -13,7 +14,7 @@
 import router from '@/router';
 
 export default {
-  name: 'GithubLogin',
+  name: 'KakaoLogin',
   props: {
     params: Object,
     onSuccess: Function,
@@ -33,7 +34,7 @@ export default {
     },
   },
   mounted() {
-    // Github query-string 검사
+    // Kakao query-string 검사
     const stateRegex = /state=([^&#/]+)/.exec(window.location.href);
     if (stateRegex && stateRegex.length > 1 && stateRegex[1] === this.state) {
       const codeRegex = /code=([^&#/]+)/.exec(window.location.href);
@@ -43,9 +44,10 @@ export default {
           const state = stateRegex[1];
 
           const params = {
-            loginType: 'github',
+            loginType: 'kakao',
             code,
             state,
+            redirectUri: this.redirectUri,
           };
 
           this.$parent.$parent.axios.post('/api/login/oauth', params)
@@ -55,10 +57,10 @@ export default {
               if (hasAuth) {
                 this.onSuccess({ hasAuth, token, username });
               } else {
-                this.onFailure('Github 인증 실패');
+                this.onFailure('Kakao 인증 실패');
               }
             }).catch((err) => {
-              this.$log.debug('[GithubLogin]', err);
+              this.$log.debug('[KakaoLogin]', err);
             });
         }
       }
@@ -66,18 +68,16 @@ export default {
   },
   methods: {
     handleClick() {
-      document.querySelector('#github-login-form').submit();
+      document.querySelector('#kakao-login-form').submit();
     },
   },
 };
 </script>
 
 <style scoped>
-.github-login-btn {
+.kakao-login-btn {
   width: 36px;
   height: 36px;
-  padding-top: 4px;
-  padding-left: 8px;
   background-color: white;
   cursor: pointer;
   border-radius: 1px;
@@ -88,11 +88,12 @@ export default {
   outline: none;
 }
 
-.github-login-btn:hover {
+.kakao-login-btn:hover {
   box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
 }
 
 .logo {
-  width: 20px;
+  width: 36px;
+  height: 36px;
 }
 </style>

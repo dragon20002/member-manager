@@ -197,8 +197,8 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #42b983; /* Blue */
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #42b983;
   border-radius: 50%;
   width: 60px;
   height: 60px;

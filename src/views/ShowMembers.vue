@@ -1,21 +1,25 @@
 <template>
   <div class="home">
-    <div class="table">
-      <div class="row">
-        <div class="col">아이디</div>
-        <div class="col">이름</div>
-        <div class="col">전화번호</div>
-        <div class="col">이메일</div>
-        <div class="col">주소</div>
-      </div>
-      <div class="row" v-for="member in members" :key="member.id">
-        <div class="col">{{ member.userId }}</div>
-        <div class="col">{{ member.name }}</div>
-        <div class="col">{{ member.telNo }}</div>
-        <div class="col">{{ member.email }}</div>
-        <div class="col">{{ member.address }}</div>
-      </div>
-    </div>
+    <table class="container table">
+      <thead>
+        <tr>
+          <th>아이디</th>
+          <th>이름</th>
+          <th>전화번호</th>
+          <th>이메일</th>
+          <th>주소</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="member in members" :key="member.id">
+          <td>{{ member.userId }}</td>
+          <td>{{ member.name }}</td>
+          <td>{{ member.telNo }}</td>
+          <td>{{ member.email }}</td>
+          <td>{{ member.address }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -46,3 +50,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+table thead {
+  background-color: #42b983;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #42b9832a;
+}
+</style>

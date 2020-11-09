@@ -26,6 +26,11 @@
           :renderParams="githubLogin.renderParams"
           :onSuccess="onSuccessGithubLogin" :onFailure="onFailGithubLogin" />
       </span>
+      <span class="item">
+        <KakaoLogin :params="kakaoLogin.params"
+          :renderParams="kakaoLogin.renderParams"
+          :onSuccess="onSuccessKakaoLogin" :onFailure="onFailKakaoLogin" />
+      </span>
     </div>
     <div class="login-menu">
       <span class="item"><router-link to="/create-member">회원가입</router-link></span>
@@ -38,6 +43,7 @@
 <script>
 import GoogleLogin from 'vue-google-login';
 import GithubLogin from '@/components/GithubLogin.vue';
+import KakaoLogin from '@/components/KakaoLogin.vue';
 import $ from 'jquery';
 
 export default {
@@ -45,6 +51,7 @@ export default {
   components: {
     GoogleLogin,
     GithubLogin,
+    KakaoLogin,
   },
   data() {
     return {
@@ -58,7 +65,14 @@ export default {
       },
       githubLogin: {
         params: {
-          client_id: 'abcd',
+          clientId: '2c1347aac22bb89c84f3',
+          state: 'aaaa',
+        },
+      },
+      kakaoLogin: {
+        params: {
+          clientId: 'edb60a1796c20a7eab7c98b12c550998',
+          state: 'bbbb',
         },
       },
       member: {
@@ -114,6 +128,16 @@ export default {
       });
     },
     onFailGithubLogin(e) {
+      this.$log.debug('[Login]', e);
+      this.$parent.openAlertPopup(e);
+    },
+    onSuccessKakaoLogin(kakaoUser) {
+      this.$parent.doLogin('kakao', {
+        token: kakaoUser.token,
+        username: kakaoUser.username,
+      });
+    },
+    onFailKakaoLogin(e) {
       this.$log.debug('[Login]', e);
       this.$parent.openAlertPopup(e);
     },
