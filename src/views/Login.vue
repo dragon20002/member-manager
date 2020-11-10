@@ -98,14 +98,21 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      this.$parent.axios.post('api/login', this.member)
+      this.$parent.axios.post('/api/login', this.member)
         .then((response) => {
-          if (response.data.hasAuth) {
-            this.$parent.doLogin(null, response.data.jws);
+          this.$log.debug('[Login]', '/api/login', response);
+          const {
+            hasAuth, token, imageUrl, name,
+          } = response.data;
+
+          if (hasAuth) {
+            this.$parent.doLogin(null, { token, imageUrl, name });
           } else {
+            this.$parent.invalidateAuth();
             this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');
           }
         }).catch(() => {
+          this.$parent.invalidateAuth();
           this.$parent.openAlertPopup('계정 정보를 찾을 수 없습니다.');
         }).finally(() => {
           this.$parent.isLoading = false;
@@ -114,7 +121,8 @@ export default {
     onSuccessGoogleLogin(googleUser) {
       this.$parent.doLogin('google', {
         token: googleUser.getAuthResponse().id_token,
-        username: googleUser.getBasicProfile().getName(),
+        imageUrl: googleUser.getBasicProfile().getImageUrl(),
+        name: googleUser.getBasicProfile().getName(),
       });
     },
     onFailGoogleLogin(e) {
@@ -124,7 +132,8 @@ export default {
     onSuccessGithubLogin(githubUser) {
       this.$parent.doLogin('github', {
         token: githubUser.token,
-        username: githubUser.username,
+        imageUrl: githubUser.imageUrl,
+        name: githubUser.name,
       });
     },
     onFailGithubLogin(e) {
@@ -134,7 +143,8 @@ export default {
     onSuccessKakaoLogin(kakaoUser) {
       this.$parent.doLogin('kakao', {
         token: kakaoUser.token,
-        username: kakaoUser.username,
+        imageUrl: kakaoUser.imageUrl,
+        name: kakaoUser.name,
       });
     },
     onFailKakaoLogin(e) {

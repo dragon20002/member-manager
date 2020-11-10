@@ -302,7 +302,7 @@ export default {
         headers: {},
       });
 
-      axiosInst.defaults.headers.jws = jws;
+      axiosInst.defaults.headers.token = token;
       ```
 
 7. Vue-router 사용법
@@ -381,10 +381,10 @@ export default {
     - Get/Set
       ```js
       // javascript
-      this.$session.set('jws', jws);
-      this.$session.get('jsw');
+      this.$session.set('token', token);
+      this.$session.get('token');
 
       // router/index.js
       import router from '@/router';
-      router.app.$session.get('jws');
+      router.app.$session.get('token');
       ```

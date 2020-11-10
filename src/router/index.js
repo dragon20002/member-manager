@@ -15,7 +15,7 @@ const routes = [
     path: '/show-members',
     name: '회원관리',
     depth: 0,
-    component: () => import(/* webpackChunkName: "error" */ '@/views/ShowMembers.vue'),
+    component: () => import(/* webpackChunkName: "showMembers" */ '@/views/ShowMembers.vue'),
   },
   {
     path: '/about',
@@ -30,13 +30,19 @@ const routes = [
     path: '/create-member',
     name: '회원가입',
     depth: -1,
-    component: () => import(/* webpackChunkName: "error" */ '@/views/CreateMember.vue'),
+    component: () => import(/* webpackChunkName: "createMember" */ '@/views/CreateMember.vue'),
   },
   {
     path: '/login',
     name: '로그인',
     depth: -1,
-    component: () => import(/* webpackChunkName: "error" */ '@/views/Login.vue'),
+    component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
+  },
+  {
+    path: '/show-member',
+    name: '회원정보',
+    depth: -1,
+    component: () => import(/* webpackChunkName: "showMember" */ '@/views/ShowMember.vue'),
   },
   {
     path: '/error',
@@ -61,6 +67,7 @@ const router = new VueRouter({
  */
 const authRoutePaths = [
   '/show-members',
+  '/show-member',
 ];
 
 router.beforeEach((to, from, next) => {
@@ -69,7 +76,8 @@ router.beforeEach((to, from, next) => {
 
   // 로그인이 필요한 경로 필터
   if (authRoutePaths.indexOf(toPath) > -1) {
-    if (!router.app.$session.get('jws')) {
+    if (!router.app.$session.get('token')) {
+      router.app.$log.debug('[router]', 'Need login');
       next('/login');
       return;
     }

@@ -11,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="member in members" :key="member.id">
+        <tr>
           <td>{{ member.userId }}</td>
           <td>{{ member.name }}</td>
           <td>{{ member.telNo }}</td>
@@ -27,18 +27,23 @@
 import router from '@/router';
 
 export default {
-  name: 'ShowMembers',
+  name: 'ShowMember',
   data: () => ({
-    members: [],
+    member: {},
   }),
   mounted() {
     this.$parent.isLoading = true;
-    this.$parent.axios.get('/api/members')
+    this.$parent.axios.get('/api/login/get-user-info')
       .then((response) => {
-        this.members = response.data;
+        this.$log.debug('[ShowMember]', '/api/login/get-user-info', response);
+        if (response.data !== '') {
+          this.member = response.data;
+        } else {
+          this.$parent.openAlertPopup('사용자 정보를 찾을 수 없습니다.');
+        }
       }).catch((err) => {
         const { status } = err.response;
-        if (status === 401) {
+        if (status === 401) { // Unauthorized
           this.$parent.hasAuth = false;
 
           // 로그인화면으로 이동

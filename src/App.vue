@@ -6,15 +6,23 @@
         <span><router-link to="/login" v-show="!hasAuth">로그인</router-link></span>
       </div>
       <div class="header-top" v-show="hasAuth">
-        <span>{{ username }} 님</span>
+        <img :src="imageUrl" v-if="imageUrl != null && imageUrl.length > 0">
+        <img src="@/assets/user-circle-solid.svg" v-else>
+        <span v-if='name != null'>
+          <router-link to="/show-member" v-show="hasAuth">{{ name }}</router-link>
+          님
+        </span>
+        <span v-else>
+          <router-link to="/show-member" v-show="hasAuth">내 정보</router-link>
+        </span>
         <span><button class="btn btn-link" v-show="hasAuth" @click="doLogout()">로그아웃</button></span>
       </div>
       <div class="header-menu">
-        <menu-item
+        <MenuItem
             v-for="menu in menus"
             :key="menu.path"
             :menu="menu">
-        </menu-item>
+        </MenuItem>
       </div>
     </div>
     <router-view/>
@@ -66,7 +74,8 @@ export default {
     return {
       axios: null,
       hasAuth: false,
-      username: '',
+      imageUrl: '',
+      name: '',
       isLoading: false,
       popupMsg: '',
       popupCallback: null,
@@ -77,14 +86,15 @@ export default {
   methods: {
     checkAuth() {
       this.isLoading = true;
-      this.axios.get('api/login/has-auth')
+      this.axios.get('/api/login/has-auth')
         .then((response) => {
+          this.$log.debug('[App]', '/api/login/has-auth', response);
           const {
-            hasAuth, loginType, jws, username,
+            hasAuth, loginType, token, imageUrl, name,
           } = response.data;
 
           if (hasAuth) {
-            this.doLogin(loginType, { token: jws, username });
+            this.doLogin(loginType, { token, imageUrl, name });
           } else {
             this.invalidateAuth();
           }
@@ -94,24 +104,28 @@ export default {
     },
     doLogin(loginType, user) {
       this.hasAuth = true;
-      this.username = user.username;
+      this.imageUrl = user.imageUrl;
+      this.name = user.name;
       this.$session.set('login-type', loginType);
-      this.$session.set('jws', user.token);
-      this.$session.set('username', user.username);
+      this.$session.set('token', user.token);
+      this.$session.set('imageUrl', user.imageUrl);
+      this.$session.set('name', user.name);
       this.axios.defaults.headers.loginType = loginType;
-      this.axios.defaults.headers.jws = user.token;
+      this.axios.defaults.headers.token = user.token;
       if (!router.currentRoute || router.currentRoute.path !== '/') {
         router.push('/');
       }
     },
     invalidateAuth() {
       this.hasAuth = false;
-      this.username = '';
+      this.imageUrl = '';
+      this.name = '';
       this.$session.set('login-type', null);
-      this.$session.set('jws', null);
-      this.$session.set('username', null);
+      this.$session.set('token', null);
+      this.$session.set('imageUrl', null);
+      this.$session.set('name', null);
       this.axios.defaults.headers.loginType = null;
-      this.axios.defaults.headers.jws = null;
+      this.axios.defaults.headers.token = null;
     },
     doLogout() {
       this.invalidateAuth();
@@ -139,14 +153,14 @@ export default {
       timeout: 10000,
       headers: {
         type: '',
-        jws: '',
+        token: '',
       },
     });
 
     const loginType = this.$session.get('login-type');
-    const jws = this.$session.get('jws');
+    const token = this.$session.get('token');
     this.axios.defaults.headers.loginType = loginType;
-    this.axios.defaults.headers.jws = jws;
+    this.axios.defaults.headers.token = token;
     this.checkAuth();
   },
 };
@@ -167,6 +181,16 @@ export default {
 
 .header-top {
   text-align: right;
+}
+
+.header-top img {
+  width: 24px;
+  margin: 0px 8px 0px 8px;
+  border-radius: 50%;
+}
+
+.header-top span {
+  vertical-align: middle;
 }
 
 .header-top span:not(:last-child)::after {

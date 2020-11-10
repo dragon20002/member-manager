@@ -6,7 +6,7 @@
       <input type="hidden" name="response_type" value="code">
       <input type="hidden" name="state" :value="state">
     </form>
-    <img class="logo" src="../assets/kakao_logo.png">
+    <img class="logo" src="@/assets/kakao_logo.png">
   </div>
 </template>
 
@@ -50,17 +50,31 @@ export default {
             redirectUri: this.redirectUri,
           };
 
+          this.$parent.$parent.isLoading = true;
           this.$parent.$parent.axios.post('/api/login/oauth', params)
             .then((response) => {
-              const { hasAuth, token, username } = response.data;
+              this.$log.debug('[KakaoLogin]', '/api/login/oauth', response);
+              const {
+                hasAuth,
+                token,
+                imageUrl,
+                name,
+              } = response.data;
 
               if (hasAuth) {
-                this.onSuccess({ hasAuth, token, username });
+                this.onSuccess({
+                  hasAuth,
+                  token,
+                  imageUrl,
+                  name,
+                });
               } else {
                 this.onFailure('Kakao 인증 실패');
               }
             }).catch((err) => {
               this.$log.debug('[KakaoLogin]', err);
+            }).finally(() => {
+              this.$parent.$parent.isLoading = false;
             });
         }
       }

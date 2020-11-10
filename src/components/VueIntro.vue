@@ -1,10 +1,9 @@
 <template>
   <div class="vue-intro">
-    <h2 id="Vue-js가-무엇인가요">
+    <h5 id="Vue-js가-무엇인가요" class="title">
       <a href="#Vue-js가-무엇인가요" class="headerlink" title="Vue.js가 무엇인가요?"></a>
       Vue.js가 무엇인가요?
-    </h2>
-    <hr>
+    </h5>
     <p>
       Vue(/vjuː/ 로 발음, <strong>view</strong> 와 발음이 같습니다.)는
       사용자 인터페이스를 만들기 위한 <strong>프로그레시브 프레임워크</strong> 입니다.
@@ -31,3 +30,16 @@ export default {
   name: 'VueIntro',
 };
 </script>
+
+<style scoped>
+.title {
+  background-color: #42b983;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+a {
+  color:  #42b983;
+}
+</style>

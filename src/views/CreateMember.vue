@@ -170,7 +170,7 @@ export default {
       $('input[name=userId]').removeClass('error');
 
       this.$parent.isLoading = true;
-      this.$parent.axios.post('api/login/check-member-dup', { userId })
+      this.$parent.axios.post('/api/login/check-member-dup', { userId })
         .then((response) => {
           this.isMemberDup = response.data;
           if (this.isMemberDup) {
