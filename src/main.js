@@ -5,14 +5,8 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
+Vue.prototype.$hostname = 'http://localhost:8080';
 Vue.config.productionTip = false;
-Vue.mixin({
-  data() {
-    return {
-      $hostname: 'http://localhost:8080',
-    };
-  },
-});
 
 Vue.use(VueSession);
 Vue.use(VueLogger, {

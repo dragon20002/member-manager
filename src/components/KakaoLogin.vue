@@ -51,7 +51,7 @@ export default {
           };
 
           this.$parent.$parent.isLoading = true;
-          this.$parent.$parent.axios.post('/api/login/oauth', params)
+          this.$axios.post('/api/login/oauth', params)
             .then((response) => {
               this.$log.debug('[KakaoLogin]', '/api/login/oauth', response);
               const {

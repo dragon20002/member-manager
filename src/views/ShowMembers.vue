@@ -33,7 +33,7 @@ export default {
   }),
   mounted() {
     this.$parent.isLoading = true;
-    this.$parent.axios.get('/api/members')
+    this.$axios.get('/api/members')
       .then((response) => {
         this.members = response.data;
       }).catch((err) => {

@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import $ from 'jquery';
 import axios from 'axios';
 import MenuItem from '@/components/MenuItem.vue';
@@ -72,7 +73,6 @@ export default {
   },
   data() {
     return {
-      axios: null,
       hasAuth: false,
       imageUrl: '',
       name: '',
@@ -86,7 +86,7 @@ export default {
   methods: {
     checkAuth() {
       this.isLoading = true;
-      this.axios.get('/api/login/has-auth')
+      this.$axios.get('/api/login/has-auth')
         .then((response) => {
           this.$log.debug('[App]', '/api/login/has-auth', response);
           const {
@@ -110,8 +110,8 @@ export default {
       this.$session.set('token', user.token);
       this.$session.set('imageUrl', user.imageUrl);
       this.$session.set('name', user.name);
-      this.axios.defaults.headers.loginType = loginType;
-      this.axios.defaults.headers.token = user.token;
+      this.$axios.defaults.headers.loginType = loginType;
+      this.$axios.defaults.headers.token = user.token;
       if (!router.currentRoute || router.currentRoute.path !== '/') {
         router.push('/');
       }
@@ -124,8 +124,8 @@ export default {
       this.$session.set('token', null);
       this.$session.set('imageUrl', null);
       this.$session.set('name', null);
-      this.axios.defaults.headers.loginType = null;
-      this.axios.defaults.headers.token = null;
+      this.$axios.defaults.headers.loginType = null;
+      this.$axios.defaults.headers.token = null;
     },
     doLogout() {
       this.invalidateAuth();
@@ -148,8 +148,8 @@ export default {
     },
   },
   mounted() {
-    this.axios = axios.create({
-      baseURL: this.$data.$hostname,
+    Vue.prototype.$axios = axios.create({
+      baseURL: this.$hostname,
       timeout: 10000,
       headers: {
         type: '',
@@ -159,8 +159,8 @@ export default {
 
     const loginType = this.$session.get('login-type');
     const token = this.$session.get('token');
-    this.axios.defaults.headers.loginType = loginType;
-    this.axios.defaults.headers.token = token;
+    this.$axios.defaults.headers.loginType = loginType;
+    this.$axios.defaults.headers.token = token;
     this.checkAuth();
   },
 };

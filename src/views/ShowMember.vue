@@ -33,7 +33,7 @@ export default {
   }),
   mounted() {
     this.$parent.isLoading = true;
-    this.$parent.axios.get('/api/login/get-user-info')
+    this.$axios.get('/api/login/get-user-info')
       .then((response) => {
         this.$log.debug('[ShowMember]', '/api/login/get-user-info', response);
         if (response.data !== '') {

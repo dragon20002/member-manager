@@ -98,7 +98,7 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      this.$parent.axios.post('/api/login', this.member)
+      this.$axios.post('/api/login', this.member)
         .then((response) => {
           this.$log.debug('[Login]', '/api/login', response);
           const {

@@ -170,7 +170,7 @@ export default {
       $('input[name=userId]').removeClass('error');
 
       this.$parent.isLoading = true;
-      this.$parent.axios.post('/api/login/check-member-dup', { userId })
+      this.$axios.post('/api/login/check-member-dup', { userId })
         .then((response) => {
           this.isMemberDup = response.data;
           if (this.isMemberDup) {
@@ -200,7 +200,7 @@ export default {
       }
 
       this.$parent.isLoading = true;
-      this.$parent.axios.post(`${this.$data.$hostname}/api/login/create-member`, this.member)
+      this.$axios.post('/api/login/create-member', this.member)
         .then((response) => {
           const isCreated = response.data;
           if (isCreated) {
