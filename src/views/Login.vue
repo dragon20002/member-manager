@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import GoogleLogin from 'vue-google-login';
+// import GoogleLogin from 'vue-google-login';
+import GoogleLogin from '@/components/GoogleLogin.vue';
 import GithubLogin from '@/components/GithubLogin.vue';
 import KakaoLogin from '@/components/KakaoLogin.vue';
 import $ from 'jquery';
@@ -57,7 +58,9 @@ export default {
     return {
       googleLogin: {
         params: {
-          client_id: '451544914380-m657ri1nr9i2b1qeq8jb8p3o3bl1o8b0.apps.googleusercontent.com',
+          // client_id: `${process.env.VUE_APP_GOOGLE_LOGIN_CLIENT_ID}`,
+          clientId: `${process.env.VUE_APP_GOOGLE_LOGIN_CLIENT_ID}`,
+          state: `${process.env.VUE_APP_GOOGLE_LOGIN_STATE}`,
         },
         renderParams: {
           width: 36,
@@ -65,14 +68,14 @@ export default {
       },
       githubLogin: {
         params: {
-          clientId: '2c1347aac22bb89c84f3',
-          state: 'aaaa',
+          clientId: `${process.env.VUE_APP_GITHUB_LOGIN_CLIENT_ID}`,
+          state: `${process.env.VUE_APP_GITHUB_LOGIN_STATE}`,
         },
       },
       kakaoLogin: {
         params: {
-          clientId: 'edb60a1796c20a7eab7c98b12c550998',
-          state: 'bbbb',
+          clientId: `${process.env.VUE_APP_KAKAO_LOGIN_CLIENT_ID}`,
+          state: `${process.env.VUE_APP_KAKAO_LOGIN_CLIENT_ID}`,
         },
       },
       member: {
@@ -120,9 +123,12 @@ export default {
     },
     onSuccessGoogleLogin(googleUser) {
       this.$parent.doLogin('google', {
-        token: googleUser.getAuthResponse().id_token,
-        imageUrl: googleUser.getBasicProfile().getImageUrl(),
-        name: googleUser.getBasicProfile().getName(),
+        // token: googleUser.getAuthResponse().id_token,
+        // imageUrl: googleUser.getBasicProfile().getImageUrl(),
+        // name: googleUser.getBasicProfile().getName(),
+        token: googleUser.token,
+        imageUrl: googleUser.imageUrl,
+        name: googleUser.name,
       });
     },
     onFailGoogleLogin(e) {
