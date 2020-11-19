@@ -388,3 +388,43 @@ export default {
       import router from '@/router';
       router.app.$session.get('token');
       ```
+
+10. 환경변수
+    - .env 추가
+      ```yml
+      VUE_APP_PORT=8081
+      VUE_APP_HOST=http://localhost:8080
+      VUE_APP_GOOGLE_LOGIN_CLIENT_ID=451544914380-m657ri1nr9i2b1qeq8jb8p3o3bl1o8b0.apps.googleusercontent.com
+      VUE_APP_GOOGLE_LOGIN_STATE=cccc
+      VUE_APP_GITHUB_LOGIN_CLIENT_ID=2c1347aac22bb89c84f3
+      VUE_APP_GITHUB_LOGIN_STATE=aaaa
+      VUE_APP_KAKAO_LOGIN_CLIENT_ID=edb60a1796c20a7eab7c98b12c550998
+      VUE_APP_KAKAO_LOGIN_STATE=bbbb
+      ```
+
+    - 환경변수 읽기
+      ```js
+      axios.create({
+        baseURL: `${process.env.VUE_APP_HOST}`,
+        timeout: 10000,
+        headers: {
+          type: '',
+          token: '',
+        },
+      });
+      ```
+
+    - 실행 script별 mode 기본값 [Vue CLI 문서]](https://cli.vuejs.org/guide/mode-and-env.html)
+      ```json
+      {
+        ...
+        "scripts": {
+          "serve": "vue-cli-service serve --open --port 8081", //development
+          "build": "vue-cli-service build", //production
+          "test:unit": "vue-cli-service test:unit", //test
+          "test:e2e": "vue-cli-service test:e2e", //production
+          "lint": "vue-cli-service lint"
+        },
+        ...
+      }
+      ```
