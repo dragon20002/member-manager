@@ -148,7 +148,6 @@ export default {
     },
   },
   mounted() {
-    console.log('......', process.env.NODE_ENV);
     Vue.prototype.$axios = axios.create({
       baseURL: `${process.env.VUE_APP_HOST}`,
       timeout: 10000,

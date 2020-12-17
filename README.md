@@ -198,7 +198,7 @@ export default {
   @keyup.enter="createMember()">
 ```
 
-##  진행상황
+## 진행상황
 ### 회원가입, 로그인 화면 완료
 #### 주요 이슈
 1. 새로운 View, Component 추가
@@ -428,3 +428,11 @@ export default {
         ...
       }
       ```
+
+### TODO
+
+#### 1. 컴포넌트 관리
+
+- 기존 <App />에 포함된 로딩바, 팝업을 별도 컴포넌트로 만들어 각 view 마다 import하도록 변경할 것
+  - this.$parent 호출을 최소화하기 위함
+
